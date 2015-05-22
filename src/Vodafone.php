@@ -3,8 +3,17 @@ namespace MarinusJvv\Vodafone;
 
 class Vodafone
 {
-    public function setupTest()
+    private $connections = array();
+
+    public function mapConnections($connections)
     {
-        return true;
+        foreach ($connections as $connection) {
+            $this->connections[$connection[0]][$connection[1]] = $connection[2];
+        }
+    }
+
+    public function getConnections()
+    {
+        return $this->connections;
     }
 }
