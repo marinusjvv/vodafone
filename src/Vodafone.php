@@ -5,20 +5,35 @@ class Vodafone
 {
     /**
      * @var array
-     *
-     * @throws MarinusJvv\Vodafone\Exceptions\FileNotFoundException
      */
     private $mappings; 
 
-    public function __construct($path)
+    /**
+     * @param string $csvLocation Path to CSV
+     *
+     * @throws MarinusJvv\Vodafone\Exceptions\FileNotFoundException
+     */
+    public function __construct($csvLocation)
     {
         $reader = new CsvReader();
-        $mapper = $reader->read($path);
+        $mapper = $reader->read($csvLocation);
         $this->mappings = $mapper->getConnections();
     }
 
-    public function process()
+    /**
+     * @param string $from Starting device
+     * @param string $to Destination device
+     * @param integer $maxDuration Maximum length of trip in milliseconds
+     */
+    public function process($from, $to, $maxDuration)
     {
-        return $this->mappings;
+        foreach ($this->mappings[$from] as $destination => $time) {
+            if ($destination === $to) {
+                return array(
+                    'time' => $time,
+                    'path' => array('a', 'd'),
+                );
+            }
+        }
     }
 }

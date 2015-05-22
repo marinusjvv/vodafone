@@ -5,12 +5,10 @@ class VodafoneTest extends PHPUnit_Framework_TestCase
 {
     public function testProcessGivenSimplePathGetsCorrectPath()
     {
-        $this->markTestIncomplete();
-        
         $vodafone = new Vodafone(dirname(__FILE__) . '/data/example.csv');
         $expected = array(
             'time' => 1000,
-            'path' => 'a => d',
+            'path' => array('a', 'd'),
         );
         $this->assertEquals($expected, $vodafone->process('a', 'd', 1000));
     }
