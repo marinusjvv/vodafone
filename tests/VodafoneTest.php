@@ -7,12 +7,7 @@ class VodafoneTest extends PHPUnit_Framework_TestCase
     {
         $vodafone = new Vodafone();
 
-        $connections = array(
-            0 => array('a', 'b', '10'),
-            1 => array('a', 'c', '20'),
-            2 => array('b', 'd', '100'),
-        );
-
+        $path = dirname(__FILE__) . '/data/example.csv';
         $expected = array(
             'a' => array(
                 'b' => 10,
@@ -22,6 +17,6 @@ class VodafoneTest extends PHPUnit_Framework_TestCase
                 'd' => 100,
             ),
         );
-        $this->assertEquals($expected, $vodafone->process($connections));
+        $this->assertEquals($expected, $vodafone->process($path));
     }
 }

@@ -3,10 +3,16 @@ namespace MarinusJvv\Vodafone;
 
 class Vodafone
 {
-    public function process($connections)
+    public function process($path)
+    {
+        $handle = fopen($path, 'r');
+        return $this->mapConnections($handle);
+    }
+
+    private function mapConnections($handle)
     {
         $mapper = new Mapper();
-        foreach ($connections as $connection) {
+        while (($connection = fgetcsv($handle)) !== FALSE) {
             $mapper->mapConnection($connection);
         }
         return $mapper->getConnections();
