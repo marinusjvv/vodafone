@@ -13,6 +13,7 @@ class CsvReaderTest extends PHPUnit_Framework_TestCase
             'a' => array(
                 'b' => 10,
                 'c' => 20,
+                'd' => 1000,
             ),
             'b' => array(
                 'd' => 100,

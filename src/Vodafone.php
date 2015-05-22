@@ -3,10 +3,22 @@ namespace MarinusJvv\Vodafone;
 
 class Vodafone
 {
-    public function process($path)
+    /**
+     * @var array
+     *
+     * @throws MarinusJvv\Vodafone\Exceptions\FileNotFoundException
+     */
+    private $mappings; 
+
+    public function __construct($path)
     {
         $reader = new CsvReader();
         $mapper = $reader->read($path);
-        return $mapper->getConnections();
+        $this->mappings = $mapper->getConnections();
+    }
+
+    public function process()
+    {
+        return $this->mappings;
     }
 }

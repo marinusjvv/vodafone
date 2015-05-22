@@ -3,20 +3,45 @@ use MarinusJvv\Vodafone\Vodafone;
 
 class VodafoneTest extends PHPUnit_Framework_TestCase
 {
-    public function testProcessGivenPathGetsCorrectlyFormedPaths()
+    public function testProcessGivenSimplePathGetsCorrectPath()
     {
-        $vodafone = new Vodafone();
-
-        $path = dirname(__FILE__) . '/data/example.csv';
+        $this->markTestIncomplete();
+        
+        $vodafone = new Vodafone(dirname(__FILE__) . '/data/example.csv');
         $expected = array(
-            'a' => array(
-                'b' => 10,
-                'c' => 20,
-            ),
-            'b' => array(
-                'd' => 100,
-            ),
+            'time' => 1000,
+            'path' => 'a => d',
         );
-        $this->assertEquals($expected, $vodafone->process($path));
+        $this->assertEquals($expected, $vodafone->process('a', 'd', 1000));
+    }
+
+    public function testProcessGivenComplexPathGetsCorrectPath()
+    {
+        $this->markTestIncomplete();
+
+        $vodafone = new Vodafone(dirname(__FILE__) . '/data/example.csv');
+        $expected = array(
+            'time' => 110,
+            'path' => 'a => b => d',
+        );
+        $this->assertEquals($expected, $vodafone->process('a', 'd', 110));
+    }
+
+    public function testProcessGivenPathToShortTimeThrowsException()
+    {
+        $this->markTestIncomplete();
+        $this->setExpectedException('NotSureOfTheNameYet');
+
+        $vodafone = new Vodafone(dirname(__FILE__) . '/data/example.csv');
+        $vodafone->process('a', 'd', 1);
+    }
+
+    public function testProcessGivenImpossiblePathThrowsException()
+    {
+        $this->markTestIncomplete();
+        $this->setExpectedException('NotSureOfTheNameYet');
+
+        $vodafone = new Vodafone(dirname(__FILE__) . '/data/example.csv');
+        $vodafone->process('a', 'not possible', 100);
     }
 }

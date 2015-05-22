@@ -8,6 +8,8 @@ class CsvReader
     /**
      * @param string $path
      *
+     * @throws MarinusJvv\Vodafone\Exceptions\FileNotFoundException
+     *
      * @return MarinusJvv\Vodafone\Mapper
      */
     public function read($path)

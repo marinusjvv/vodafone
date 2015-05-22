@@ -10,7 +10,7 @@ class Mapper
      */
     public function mapConnection($connection)
     {
-        $this->connections[$connection[0]][$connection[1]] = $connection[2];
+        $this->connections[$connection[0]][$connection[1]] = (int)$connection[2];
     }
 
     /**
