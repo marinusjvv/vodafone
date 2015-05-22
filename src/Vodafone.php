@@ -3,17 +3,12 @@ namespace MarinusJvv\Vodafone;
 
 class Vodafone
 {
-    private $connections = array();
-
-    public function mapConnections($connections)
+    public function process($connections)
     {
+        $mapper = new Mapper();
         foreach ($connections as $connection) {
-            $this->connections[$connection[0]][$connection[1]] = $connection[2];
+            $mapper->mapConnection($connection);
         }
-    }
-
-    public function getConnections()
-    {
-        return $this->connections;
+        return $mapper->getConnections();
     }
 }

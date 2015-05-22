@@ -12,7 +12,6 @@ class VodafoneTest extends PHPUnit_Framework_TestCase
             1 => array('a', 'c', '20'),
             2 => array('b', 'd', '100'),
         );
-        $vodafone->mapConnections($connections);
 
         $expected = array(
             'a' => array(
@@ -23,6 +22,6 @@ class VodafoneTest extends PHPUnit_Framework_TestCase
                 'd' => 100,
             ),
         );
-        $this->assertEquals($expected, $vodafone->getConnections());
+        $this->assertEquals($expected, $vodafone->process($connections));
     }
 }
