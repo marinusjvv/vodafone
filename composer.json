@@ -1,0 +1,21 @@
+{
+    "name": "marinusjvv/vodafone",
+    "description": "Technical test for Vodafone",
+    "license": "MIT",
+    "keywords": ["vodafone"],
+    "authors": [
+        {
+            "name": "Marinus Jansen van Vuuren",
+            "email": "marinus.jvv1@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "MarinusJvv\\Vodafone\\": "src"
+        }
+    }
+}
