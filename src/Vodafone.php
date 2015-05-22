@@ -36,7 +36,7 @@ class Vodafone
                 }
                 return array(
                     'time' => $time,
-                    'path' => array('a', 'd'),
+                    'path' => array($from, $destination),
                 );
             }
         }
