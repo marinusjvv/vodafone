@@ -8,7 +8,9 @@ class Vodafone
     /**
      * @var array
      */
-    private $mappings; 
+    private $mappings;
+
+    private $result;
 
     /**
      * @param string $csvLocation Path to CSV
@@ -29,32 +31,40 @@ class Vodafone
      */
     public function process($from, $to, $maxDuration)
     {
+        unset($this->result);
         $followedPath = array($from);
         $timeTaken = 0;
-        $success = false;
-        $this->getPathsUsingFrom($from, $to, $maxDuration, $followedPath, $timeTaken, $success);
-        if ($success !== true) {
+        $this->getPathsUsingFrom($from, $to, $maxDuration, $followedPath, $timeTaken);
+        if (empty($this->result) === true) {
             throw new ImpossiblePathException();
         }
-        return array(
-            'time' => $timeTaken,
-            'path' => $followedPath,
-        );
+        return $this->result;
     }
 
-    private function getPathsUsingFrom($from, $to, $maxDuration, &$followedPath, &$timeTaken, &$success)
+    private function getPathsUsingFrom($from, $to, $maxDuration, &$followedPath, &$timeTaken)
     {
+        if (empty($this->result) === false) {
+            return;
+        }
         foreach ($this->mappings[$from] as $destination => $time) {
+            if (in_array($destination, $followedPath) === true) {
+                continue;
+            }
             if ($destination === $to && $time + $timeTaken <= $maxDuration) {
                 $followedPath[] = $destination;
                 $timeTaken += $time;
-                $success = true;
+                if (empty($this->result) === true) {
+                    $this->result = array(
+                        'time' => $timeTaken,
+                        'path' => $followedPath,
+                    );
+                }
                 return;
             }
             if (array_key_exists($destination, $this->mappings)) {
                 $followedPath[] = $destination;
                 $timeTaken += $time;
-                $this->getPathsUsingFrom($destination, $to, $maxDuration, $followedPath, $timeTaken, $success);
+                $this->getPathsUsingFrom($destination, $to, $maxDuration, $followedPath, $timeTaken);
             }
         }
     }
