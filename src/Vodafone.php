@@ -1,6 +1,8 @@
 <?php
 namespace MarinusJvv\Vodafone;
 
+use MarinusJvv\Vodafone\Exceptions\InsufficientTimeException;
+
 class Vodafone
 {
     /**
@@ -29,6 +31,9 @@ class Vodafone
     {
         foreach ($this->mappings[$from] as $destination => $time) {
             if ($destination === $to) {
+                if ($time > $maxDuration) {
+                    throw new InsufficientTimeException();
+                }
                 return array(
                     'time' => $time,
                     'path' => array('a', 'd'),

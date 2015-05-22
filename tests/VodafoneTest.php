@@ -27,8 +27,7 @@ class VodafoneTest extends PHPUnit_Framework_TestCase
 
     public function testProcessGivenPathToShortTimeThrowsException()
     {
-        $this->markTestIncomplete();
-        $this->setExpectedException('NotSureOfTheNameYet');
+        $this->setExpectedException('MarinusJvv\Vodafone\Exceptions\InsufficientTimeException');
 
         $vodafone = new Vodafone(dirname(__FILE__) . '/data/example.csv');
         $vodafone->process('a', 'd', 1);
