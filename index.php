@@ -63,10 +63,12 @@ class index
      */
     private function outputResults($returned)
     {
-        foreach ($returned['path'] as $device) {
+        $totalTime = 0;
+        foreach ($returned as $device => $time) {
             echo $device . ' => ';
+            $totalTime += $time;
         }
-        echo $returned['time'] . "\n";
+        echo $totalTime . "\n";
     }
 
     /**

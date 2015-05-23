@@ -38,44 +38,79 @@ class PathBuilder
      * @param string $origin Original location
      * @param string $destination Final destination
      *
-     * @throws MarinusJvv\Vodafone\Exceptions\ImpossiblePathException
+     * @throws ImpossiblePathException
      * 
      * @return array
      */
     public function build($origin, $destination)
     {
-        $followedPath = array($origin);
-        $timeTaken = 0;
-        $this->getPathsUsingFrom($origin, $destination, $followedPath, $timeTaken);
+        $path = array($origin => 0);
+        $this->getPaths($origin, $destination, $path);
         $this->checkIfPathHasBeenFound();
         return $this->result;
     }
 
     /**
+     * Gets paths from current destination. Removes previous path if it's a dead
+     * end.
+     *
      * @param string $from Current starting location
      * @param string $destination Final destination
-     * @param array &$followedPath Current path taken
-     * @param string &$timeTaken Current amount of time taken
+     * @param array &$path Current path taken
      *
      * @return void
      */
-    private function getPathsUsingFrom($from, $destination, &$followedPath, &$timeTaken)
+    private function getPaths($from, $destination, &$path)
     {
-        if ($this->hasPathBeenFoundAlready() === true) {
-            return;
-        }
-        if (array_key_exists($from, $this->mappings) === false) {
+        $totalTime = $this->getTotalTime($path);
+        if ($this->doesNextDeviceExist($from) === false || $this->isTimeOverLimit($totalTime) === true) {
+            array_pop($path);
             return;
         }
         foreach ($this->mappings[$from] as $to => $time) {
-            if ($this->hasDestinationBeenUsedAlready($to, $followedPath) === true) {
-                continue;
-            }
-            if ($this->writeDataIfComplete($to, $destination, $time, $timeTaken, $followedPath) === true) {
-                return;
-            }
-            $this->getPathsFromNextDestination($to, $time, $destination, $followedPath, $timeTaken);
+            $path[$to] = $time;
+            $this->writeDataIfComplete($to, $destination, $time, $totalTime, $path);
+            $this->getPaths($to, $destination, $path);
         }
+        array_pop($path);
+    }
+
+    /**
+     * Gets the current total travelled time.
+     *
+     * @param array $path The current travelled path
+     *
+     * @return integer
+     */
+    private function getTotalTime($path)
+    {
+        $totalTime = 0;
+        foreach ($path as $time) {
+            $totalTime += $time;
+        }
+        return $totalTime;
+    }
+
+    /**
+     * Is there a device connected to this one?
+     *
+     * @param string $from Current device
+     *
+     * @return bool
+     */
+    private function doesNextDeviceExist($from)
+    {
+        return array_key_exists($from, $this->mappings) === true;
+    }
+
+    /**
+     * Is the current travelled time over the limit?
+     *
+     * @param integer $totalTime Current travelled time
+     */
+    private function isTimeOverLimit($totalTime)
+    {
+        return $totalTime > $this->maxDuration;
     }
 
     /*
@@ -83,22 +118,9 @@ class PathBuilder
      * 
      * @return bool
      */
-    private function hasPathBeenFoundAlready()
+    private function hasPathBeenFound()
     {
         return empty($this->result) === false;
-    }
-
-    /*
-     * Has the current destination already been used as an origin?
-     *
-     * @param string $to Current destination to be checked
-     * @param array $followedPath The current path being followed
-     * 
-     * @return bool
-     */
-    private function hasDestinationBeenUsedAlready($to, $followedPath)
-    {
-        return in_array($to, $followedPath) === true;
     }
 
     /*
@@ -107,38 +129,15 @@ class PathBuilder
      * @param string $to Current destination to be checked
      * @param string $destination Final destination
      * @param int $time Time from current origin to current destination
-     * @param int $timeTaken Current total time from origin
-     * @param array $followedPath Current path taken
-     * 
-     * @return bool
+     * @param int $totalTime Time from origin to current destination
+     * @param array $path Current path taken
      */
-    private function writeDataIfComplete($to, $destination, $time, $timeTaken, $followedPath)
+    private function writeDataIfComplete($to, $destination, $time, $totalTime, $path)
     {
-        if ($this->isDestinationFinalAndWithinTimeLimit($to, $destination, $time, $timeTaken) === true) {
-            $this->setResultData(
-                $timeTaken + $time,
-                array_merge($followedPath, array($to))
-            );
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets paths where current destination is an origin
-     *
-     * @param string $to Current destination
-     * @param integer $time Time from current origin to current destination
-     * @param string $destination Final destination
-     * @param array &$followedPath Current path taken
-     * @param int $timeTaken Current total time from origin
-     */
-    private function getPathsFromNextDestination($to, $time, $destination, &$followedPath, &$timeTaken)
-    {
-        if ($this->doesDestinationExistAsOrigin($to) === true) {
-            $followedPath[] = $to;
-            $timeTaken += $time;
-            $this->getPathsUsingFrom($to, $destination, $followedPath, $timeTaken);
+        if ($this->isDestinationFinalAndWithinTimeLimit($to, $destination, $time, $totalTime) === true) {
+            if ($this->hasPathBeenFound() === false) {
+                $this->result = $path;
+            }
         }
     }
 
@@ -148,42 +147,14 @@ class PathBuilder
      * @param string $to Current destination
      * @param string $destination Final destination
      * @param integer $time Time from current origin to current destination
-     * @param int $timeTaken Current total time from origin
+     * @param integer $totalTime Time from origin to current destination
      *
      * @return bool
      */
-    private function isDestinationFinalAndWithinTimeLimit($to, $destination, $time, $timeTaken)
+    private function isDestinationFinalAndWithinTimeLimit($to, $destination, $time, $totalTime)
     {
         return $to === $destination
-            && $time + $timeTaken <= $this->maxDuration;
-    }
-
-    /**
-     * Sets the esulting path and time if it is not yet set
-     *
-     * @param int $timeTaken Current total time from origin
-     * @param array $followedPath Current path taken
-     */
-    private function setResultData($timeTaken, $followedPath)
-    {
-        if ($this->hasPathBeenFoundAlready() === false) {
-            $this->result = array(
-                'time' => $timeTaken,
-                'path' => $followedPath,
-            );
-        }
-    }
-
-    /**
-     * Checks to see if we have used this destination as an origin before
-     *
-     * @param string $to Current destination
-     *
-     * @return bool
-     */
-    private function doesDestinationExistAsOrigin($to)
-    {
-        return array_key_exists($to, $this->mappings) === true;
+            && $this->isTimeOverLimit($time + $totalTime) === false;
     }
 
     /**
@@ -193,7 +164,7 @@ class PathBuilder
      */
     private function checkIfPathHasBeenFound()
     {
-        if (empty($this->result) === true) {
+        if ($this->hasPathBeenFound() === false) {
             throw new ImpossiblePathException();
         }
     }
