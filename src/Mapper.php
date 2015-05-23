@@ -33,6 +33,7 @@ class Mapper
         }
         
         $this->connections[$connection[0]][$connection[1]] = (int)$connection[2];
+        $this->connections[$connection[1]][$connection[0]] = (int)$connection[2];
     }
 
     private function validateConnection($connection)

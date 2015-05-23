@@ -16,7 +16,14 @@ class MapperTest extends PHPUnit_Framework_TestCase
                 'c' => 20,
             ),
             'b' => array(
+                'a' => 10,
                 'd' => 100,
+            ),
+            'c' => array(
+                'a' => 20,
+            ),
+            'd' => array(
+                'b' => 100,
             ),
         );
         $this->assertEquals($expected, $mapper->getConnections());
@@ -41,10 +48,17 @@ class MapperTest extends PHPUnit_Framework_TestCase
                 'b' => 10,
             ),
             'b' => array(
+                'a' => 10,
                 'd' => 100,
+            ),
+            'd' => array(
+                'b' => 100,
             ),
             '1' => array(
                 '2' => 3,
+            ),
+            '2' => array(
+                '1' => 3,
             ),
         );
         $this->assertEquals($expected, $mapper->getConnections());

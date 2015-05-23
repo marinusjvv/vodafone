@@ -17,6 +17,14 @@ class CsvReaderTest extends PHPUnit_Framework_TestCase
             ),
             'b' => array(
                 'd' => 100,
+                'a' => 10,
+            ),
+            'c' => array(
+                'a' => 20,
+            ),
+            'd' => array(
+                'a' => 1000,
+                'b' => 100,
             ),
         );
         $this->assertEquals($expected, $mapper->getConnections());

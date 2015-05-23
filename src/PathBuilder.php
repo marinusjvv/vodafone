@@ -68,6 +68,9 @@ class PathBuilder
             return;
         }
         foreach ($this->mappings[$from] as $to => $time) {
+            if ($this->doesDeviceExistInCurrentPath($to, $path) === true) {
+                continue;
+            }
             $path[$to] = $time;
             $this->writeDataIfComplete($to, $destination, $time, $totalTime, $path);
             $this->getPaths($to, $destination, $path);
@@ -121,6 +124,11 @@ class PathBuilder
     private function hasPathBeenFound()
     {
         return empty($this->result) === false;
+    }
+
+    private function doesDeviceExistInCurrentPath($to, $path)
+    {
+        return array_key_exists($to, $path) === true;
     }
 
     /*
