@@ -1,6 +1,8 @@
 <?php
 namespace MarinusJvv\Vodafone;
 
+use MarinusJvv\Vodafone\Exceptions\InvalidConnectionException;
+
 class Mapper
 {
     /**
@@ -24,7 +26,26 @@ class Mapper
      */
     public function mapConnection($connection)
     {
+        try {
+            $this->validateConnection($connection);
+        } catch (InvalidConnectionException $e) {
+            return;
+        }
+        
         $this->connections[$connection[0]][$connection[1]] = (int)$connection[2];
+    }
+
+    private function validateConnection($connection)
+    {
+        if (count($connection) !== 3) {
+            throw new InvalidConnectionException();
+        }
+        if (ctype_alnum($connection[0]) === false || ctype_alnum($connection[1]) === false) {
+            throw new InvalidConnectionException();
+        }
+        if ((int)$connection[2] <= 0) {
+            throw new InvalidConnectionException();
+        }
     }
 
     /**

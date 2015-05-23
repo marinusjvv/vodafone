@@ -16,7 +16,7 @@ class index
     public function begin($location)
     {
         $processor = $this->getPathProcessor($location);
-        echo "Please enter desired to and from device, as well as time limit. Format should be [Device From] [Device To] [Time]\n\n";
+        echo "Please enter desired to and from device, as well as time limit in milliseconds. Format should be [Device From] [Device To] [Time]\n\n";
         while (true) {
             $this->process($processor);
         }
