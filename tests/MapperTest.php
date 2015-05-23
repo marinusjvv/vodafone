@@ -33,7 +33,8 @@ class MapperTest extends PHPUnit_Framework_TestCase
         $mapper->mapConnection(array('-', 'c', '10'));
         $mapper->mapConnection(array('a', '-', '10'));
         $mapper->mapConnection(array('a', 'c', -10));
-        $mapper->mapConnection(array('b', 'd', '100'));
+        $mapper->mapConnection(array('a b', 'c', '100'));
+        $mapper->mapConnection(array('b', 'd', 100));
 
         $expected = array(
             'a' => array(
