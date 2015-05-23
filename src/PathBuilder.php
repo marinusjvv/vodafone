@@ -64,6 +64,9 @@ class PathBuilder
         if ($this->hasPathBeenFoundAlready() === true) {
             return;
         }
+        if (array_key_exists($from, $this->mappings) === false) {
+            return;
+        }
         foreach ($this->mappings[$from] as $to => $time) {
             if ($this->hasDestinationBeenUsedAlready($to, $followedPath) === true) {
                 continue;

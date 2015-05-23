@@ -24,7 +24,6 @@ class IndexTest extends PHPUnit_Framework_TestCase
 
     public function testIndexGivenInputGivesExpectedOutput()
     {
-        $this->markTestIncomplete();
         $descriptorspec = array(
            0 => array("pipe", "r"), 
            1 => array("pipe", "w"), 
@@ -42,13 +41,64 @@ class IndexTest extends PHPUnit_Framework_TestCase
             $this->assertTrue(false);
         }
 
-        fwrite($pipes[0], "a b 200\n");    // send start
-        echo fgets($pipes[1],4096); //get answer
+        fgets($pipes[1],4096);
+        fgets($pipes[1],4096);
+        fgets($pipes[1],4096);
+        fwrite($pipes[0], "nonesense\n");
+        $output = trim(fgets($pipes[1], 4096));
+        $this->assertEquals('Invalid input', $output);
+
+        fgets($pipes[1],4096);
+        fwrite($pipes[0], "A F 1200\n");
+        $output = trim(fgets($pipes[1], 4096));
+        $this->assertEquals(
+            'A => B => D => E => F => 1120',
+            trim($output)
+        );
+
+        fgets($pipes[1],4096);
+        fwrite($pipes[0], "A F 1\n");
+        $output = trim(fgets($pipes[1], 4096));
+        $this->assertEquals(
+            'Path not found',
+            trim($output)
+        );
+
+        fgets($pipes[1],4096);
+        fwrite($pipes[0], "a F 1200\n");
+        $output = trim(fgets($pipes[1], 4096));
+        $this->assertEquals(
+            'Path not found',
+            trim($output)
+        );
+
+        fgets($pipes[1],4096);
+        fwrite($pipes[0], "A f 1200\n");
+        $output = trim(fgets($pipes[1], 4096));
+        $this->assertEquals(
+            'Path not found',
+            trim($output)
+        );
+
+        fgets($pipes[1],4096);
+        fwrite($pipes[0], "a f 1200\n");
+        $output = trim(fgets($pipes[1], 4096));
+        $this->assertEquals(
+            'Path not found',
+            trim($output)
+        );
+
+        fgets($pipes[1],4096);
+        fwrite($pipes[0], "A A 1200\n");
+        $output = trim(fgets($pipes[1], 4096));
+        $this->assertEquals(
+            'Path not found',
+            trim($output)
+        );
             
         fclose($pipes[0]);
         fclose($pipes[1]);
         fclose($pipes[2]);
-        $return_value = proc_close($process);  //stop test_gen.php
-        echo ("Returned:".$return_value."\n");
+        $return_value = proc_close($process);
     }
 }
