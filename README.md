@@ -1,5 +1,6 @@
-This project was created in order to complete a technical test for Vodafone. You
-can clone it using the following command: 
+This project was created in order to complete a technical test for Vodafone. 
+Test details can be found in Test_details.md An example input file is input.csv
+You can clone it using the following command: 
 
 ```
 git clone git@github.com:marinusjvv/vodafone.git
